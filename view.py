@@ -7,8 +7,8 @@ from pygame.locals import *
 
 pygame.init()   # Inicializa cada módulo importado con pygame. it needs to be called first in order for many Pygame functions to work
 DISPLAYSURF = pygame.display.set_mode((400, 300))   # Tamaño en pixeles de la superficie de la ventana, tupla: (ancho,alto)
-pygame.display.set_caption('Nicolás!')
-
+pygame.display.set_caption('Scientific Puzzle')
+clock = pygame.time.Clock()
 # RGB Values
 Aqua = ( 0, 255, 255)
 Black = ( 0, 0, 0)
@@ -27,7 +27,8 @@ Teal = ( 0, 128, 128)
 White = (255, 255, 255)
 Yellow = (255, 255, 0)
 
-DISPLAYSURF.fill(Navy_Blue)         # Método para llenar de color blanco la superficie del objeto. Método de: pygame.Surface objects
+DISPLAYSURF.fill(Navy_Blue)
+# Método para llenar de color blanco la superficie del objeto. Método de: pygame.Surface objects
 
 '''
 Instrucciones para dibujar diferentes figuras geométricas
@@ -51,4 +52,37 @@ while True: # Importante: main game loop
         if event.type == QUIT:  # Cuando se le da click a la X en la ventana para salir
             pygame.quit()       # Desactiva la librería Pygame
             sys.exit()          # Se encarga de terminar el programa.
-    pygame.display.update() # draws the Surface object returned by pygame.display.set_mode() to the screen
+
+
+        elif event.type == pygame.KEYDOWN:
+            # Mira si ha sido una de las flechas. Si es así
+            # ajusta la velocidad.
+            if event.key == pygame.K_LEFT:
+                x_change =- 3
+            elif event.key == pygame.K_RIGHT:
+                x_change = 3
+            elif event.key == pygame.K_UP:
+                y_change =- 3
+            elif event.key == pygame.K_DOWN:
+                y_change = 3
+
+        # El usuario deja de presionar la tecla
+        elif event.type == pygame.KEYUP:
+            # Si es una de las flechas, resetea el vector a cero.
+            if event.key == pygame.K_LEFT:
+                x_change = 0
+            elif event.key == pygame.K_RIGHT:
+                x_change = 0
+            elif event.key == pygame.K_UP:
+                y_change = 0
+            elif event.key == pygame.K_DOWN:
+                y_change = 0
+
+
+    # x += x_change
+    # y += y_change
+    # superficie.fill(White)
+    # car(x,y)
+
+    pygame.display.update()  # draws the Surface object returned by pygame.display.set_mode() to the screen
+    clock.tick(60)  # 30 Frames per second
