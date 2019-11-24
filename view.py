@@ -36,22 +36,22 @@ saddleBrown = (139, 69, 19)
 # btt_b1 = [(550, 100), (700, 100), (700, 150), (550, 150)]
 # btt_b2 = [(550, 200), (700, 200), (700, 250), (550, 250)]
 # Button positions
-pos_btt1 = [550, 100]
-pos_btt2 = [550, 170]
-pos_btt3 = [550, 240]
+pos_btt1 = [800, 100]
+pos_btt2 = [800, 170]
+pos_btt3 = [800, 240]
 
 # -------------------------------------------------------------------------
 # Init Pygame and initial configurations.
 # -------------------------------------------------------------------------
 
 pygame.init()
-surface = pygame.display.set_mode((733, 500))
+surface = pygame.display.set_mode((1000, 600))
 pygame.display.set_caption('Scientific Puzzle')
 clock = pygame.time.Clock()
 surface.fill(Black)
 
 # Images
-bg = pygame.image.load('Background.jpg')
+bg = pygame.image.load('Background(or).jpg')
 btt = pygame.image.load('Button.jpg')
 space = pygame.image.load("game.png")
 
@@ -66,7 +66,7 @@ def text_objects(text, font):
 
 
 def put_text(text, pos, f_size):
-    py_text = pygame.font.Font('freesandbold.ttf', f_size)
+    py_text = pygame.font.Font('Roboto-Black.ttf', f_size)
     text_surf, text_rect = text_objects(text, py_text)
     surface.blit(text_surf, text_rect)
 
