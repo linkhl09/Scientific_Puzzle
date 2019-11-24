@@ -1,74 +1,95 @@
+# -------------------------------------------------------------------------
+# Developed by:
+# Andrés Hernández: linkhl09
+# Felipe Parra: Parr0sky
+# -------------------------------------------------------------------------
 
-##
 import numpy as np
-
-import pygame, sys          # import statement that imports the pygame and sys modules
+import pygame
+import sys
 from pygame.locals import *
 
-pygame.init()   # Inicializa cada módulo importado con pygame. it needs to be called first in order for many Pygame functions to work
-DISPLAYSURF = pygame.display.set_mode((400, 300))   # Tamaño en pixeles de la superficie de la ventana, tupla: (ancho,alto)
-pygame.display.set_caption('Scientific Puzzle')
-clock = pygame.time.Clock()
+# -------------------------------------------------------------------------
+# Constraints.
+# -------------------------------------------------------------------------
+
 # RGB Values
-Aqua = ( 0, 255, 255)
-Black = ( 0, 0, 0)
-Blue = ( 0, 0, 255)
+Aqua = (0, 255, 255)
+Black = (0, 0, 0)
+Blue = (0, 0, 255)
 Fuchsia = (255, 0, 255)
 Gray = (128, 128, 128)
-Green = (0,128,0)
-Lime = ( 0,255, 0)
+Green = (0, 128, 0)
+Lime = (0, 255, 0)
 Maroon = (128, 0, 0)
-Navy_Blue = ( 0, 0,128)
+Navy_Blue = (0, 0, 128)
 Olive = (128, 128, 0)
 Purple = (128, 0, 128)
 Red = (255, 0, 0)
 Silver = (192, 192, 192)
-Teal = ( 0, 128, 128)
+Teal = (0, 128, 128)
 White = (255, 255, 255)
 Yellow = (255, 255, 0)
+saddleBrown = (139, 69, 19)
 
-DISPLAYSURF.fill(Navy_Blue)
-# Método para llenar de color blanco la superficie del objeto. Método de: pygame.Surface objects
+# Button border positions
+# btt_b1 = [(550, 100), (700, 100), (700, 150), (550, 150)]
+# btt_b2 = [(550, 200), (700, 200), (700, 250), (550, 250)]
+# Button positions
+pos_btt1 = [550, 100]
+pos_btt2 = [550, 170]
+pos_btt3 = [550, 240]
 
-'''
-Instrucciones para dibujar diferentes figuras geométricas
-'''
-# pygame.draw.polygon(surface, color, pointlist, width)
-# pygame.draw.line(surface, color, start_point, end_point, width)
-# pygame.draw.lines(surface, color, closed, pointlist, width)
-# pygame.draw.circle(surface, color, center_point, radius, width)
-# pygame.draw.ellipse(surface, color, bounding_rectangle, width)
-# pygame.draw.rect(surface, color, rectangle_tuple, width)
+# -------------------------------------------------------------------------
+# Init Pygame and initial configurations.
+# -------------------------------------------------------------------------
 
-pygame.draw.polygon(DISPLAYSURF, Yellow, ((146,0), (291,105),(236,277),(45,105)))
-pygame.draw.line(DISPLAYSURF,Teal,(40,40),(120,60),8)
-pygame.draw.circle(DISPLAYSURF, Lime, (250,80),50,2)
+pygame.init()
+surface = pygame.display.set_mode((733, 500))
+pygame.display.set_caption('Scientific Puzzle')
+clock = pygame.time.Clock()
+surface.fill(Black)
 
+# Images
+bg = pygame.image.load('Background.jpg')
+btt = pygame.image.load('Button.jpg')
+space = pygame.image.load("game.png")
 
-# Creando la ventana
-while True: # Importante: main game loop
-
-    for event in pygame.event.get():    # Módulo event
-        if event.type == QUIT:  # Cuando se le da click a la X en la ventana para salir
-            pygame.quit()       # Desactiva la librería Pygame
-            sys.exit()          # Se encarga de terminar el programa.
+# -------------------------------------------------------------------------
+# Aux methods
+# -------------------------------------------------------------------------
 
 
+def text_objects(text, font):
+    text_surface = font.render(text, True, White)
+    return text_surface, text_surface.get_rect()
+
+
+def put_text(text, pos, f_size):
+    py_text = pygame.font.Font('freesandbold.ttf', f_size)
+    text_surf, text_rect = text_objects(text, py_text)
+    surface.blit(text_surf, text_rect)
+
+# -------------------------------------------------------------------------
+# Main loop.
+# -------------------------------------------------------------------------
+
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
         elif event.type == pygame.KEYDOWN:
-            # Mira si ha sido una de las flechas. Si es así
-            # ajusta la velocidad.
             if event.key == pygame.K_LEFT:
-                x_change =- 3
+                x_change = -1
             elif event.key == pygame.K_RIGHT:
-                x_change = 3
+                x_change = 1
             elif event.key == pygame.K_UP:
-                y_change =- 3
+                y_change = -1
             elif event.key == pygame.K_DOWN:
-                y_change = 3
-
-        # El usuario deja de presionar la tecla
+                y_change = 1
         elif event.type == pygame.KEYUP:
-            # Si es una de las flechas, resetea el vector a cero.
             if event.key == pygame.K_LEFT:
                 x_change = 0
             elif event.key == pygame.K_RIGHT:
@@ -78,11 +99,14 @@ while True: # Importante: main game loop
             elif event.key == pygame.K_DOWN:
                 y_change = 0
 
+    surface.blit(bg, [0, 0])
 
-    # x += x_change
-    # y += y_change
-    # superficie.fill(White)
-    # car(x,y)
+    surface.blit(space, [15, 15])
+    surface.blit(space, [15, 15])
 
+    surface.blit(btt, pos_btt1)
+    # put_text("Cambiar Modo", btt1, 12)
+    surface.blit(btt, pos_btt2)
+    surface.blit(btt, pos_btt3)
     pygame.display.update()  # draws the Surface object returned by pygame.display.set_mode() to the screen
     clock.tick(60)  # 30 Frames per second
