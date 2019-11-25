@@ -15,6 +15,8 @@ from pygame.locals import *
 # Constraints.
 # -------------------------------------------------------------------------
 
+
+
 # RGB Values
 Aqua = (0, 255, 255)
 Black = (0, 0, 0)
@@ -37,6 +39,14 @@ saddleBrown = (139, 69, 19)
 # Board init pos
 init_pos = np.array([15, 15])
 
+#timer survival
+counter, counterText = 30, '30'.rjust(3)
+pos_counter=[850,500]
+isSurvival=False
+
+#timer adventure
+counterUp, counterUpText = 0, '0'.rjust(3)
+pos_counter=[850,500]
 # Button positions
 pos_btt3x3 = [790, 70]
 pos_btt4x4 = [850, 70]
@@ -107,7 +117,7 @@ btt = pygame.image.load('Button.jpg')
 btt_s = pygame.image.load('Button size.jpg')
 
 space = pygame.image.load("game1.png")
-
+py_text=0
 # -------------------------------------------------------------------------
 # Aux methods
 # -------------------------------------------------------------------------
@@ -124,6 +134,8 @@ def put_text(text, pos, f_size):
     text_rect.center = pos
     surface.blit(text_surf, text_rect)
 
+
+
 # -------------------------------------------------------------------------
 # Main loop.
 # -------------------------------------------------------------------------
@@ -134,25 +146,31 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                x_change = -1
-            elif event.key == pygame.K_RIGHT:
-                x_change = 1
-            elif event.key == pygame.K_UP:
-                y_change = -1
-            elif event.key == pygame.K_DOWN:
-                y_change = 1
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
-                x_change = 0
-            elif event.key == pygame.K_RIGHT:
-                x_change = 0
-            elif event.key == pygame.K_UP:
-                y_change = 0
-            elif event.key == pygame.K_DOWN:
-                y_change = 0
+        else:
 
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    x_change = -1
+                elif event.key == pygame.K_RIGHT:
+                    x_change = 1
+                elif event.key == pygame.K_UP:
+                    y_change = -1
+                elif event.key == pygame.K_DOWN:
+                    y_change = 1
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    x_change = 0
+                elif event.key == pygame.K_RIGHT:
+                    x_change = 0
+                elif event.key == pygame.K_UP:
+                    y_change = 0
+                elif event.key == pygame.K_DOWN:
+                    y_change = 0
+    counter -= 0.0625
+    counterText = str(int(counter)).rjust(3)+" sec" if counter > 0 else 'boom!'
+    counterUp += 0.0625
+    counterUpText = str(int(counterUp)).rjust(3) + " sec" if counter > 0 else 'boom!'
     # Set background
     surface.blit(bg, [0, 0])
 
@@ -210,5 +228,11 @@ while True:
     surface.blit(btt_s, pos_btt_s6)
     put_text("Odd", pos_txt_s6, f_size_btt)
 
+    if isSurvival:
+        put_text("Time remaining: ", pos_counter, f_size_tit)
+        put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt)
+    else:
+        put_text("Time Elapsed: ", pos_counter, f_size_tit)
+        put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt)
     pygame.display.update()  # draws the Surface object returned by pygame.display.set_mode() to the screen
     clock.tick(60)  # 30 Frames per second
