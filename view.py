@@ -307,14 +307,9 @@ def size_change(new_size):
         act_f_size = f_size_3
 
 
-def set_challenge():
+def set_mode(mode):
     global is_challenge
-    is_challenge = True
-
-
-def set_adventure():
-    global is_challenge
-    is_challenge = False
+    is_challenge = mode
 
 
 def change_series(num):
@@ -380,8 +375,8 @@ while True:
 
     # Buttons game mode
     put_text("Game mode", pos_mod, f_size_tit, White)
-    button("Adventure", btt, pos_btt_ma, 170, 50, set_challenge)
-    button("Challenge", btt, pos_btt_md, 170, 50, set_adventure)
+    button("Adventure", btt, pos_btt_ma, 170, 50, 0, set_mode)
+    button("Challenge", btt, pos_btt_md, 170, 50, 1, set_mode)
 
     # Buttons series
     put_text("Board size", pos_series, f_size_tit, White)
