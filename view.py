@@ -18,14 +18,15 @@ from pygame.locals import *
 
 class World:
     size = 3
-    serie = 1
+    series = 1
     number = size**2
     matrix = np.zeros((size, size))
     strMatrix = 0
-    #1:Fib, 2: X^2, 3: Primes, 4: 2^n, 5: Even, 6: Odd
-    def __init__(self, size, serie):
+
+    # 1:Fib, 2: X^2, 3: Primes, 4: 2^n, 5: Even, 6: Odd
+    def __init__(self, size, series):
         self.size = size
-        self.serie = serie
+        self.series = series
         self.number=size**2
         self.matrix = np.zeros((size, size))
         if size == 5:
@@ -34,26 +35,27 @@ class World:
             self.strMatrix = [["", "", "", ""], ["", "", "", ""], ["", "", "", ""], ["", "", "", ""]]
         elif size == 3:
             self.strMatrix = [["", "", ""], ["", "", ""], ["", "", ""]]
+
     def fib(self, lim):
-        arr=np.zeros(lim)
-        cont=0
-        while cont<lim:
-            if cont<=1:
-                arr[cont]=1
+        arr = np.zeros(lim)
+        cont = 0
+        while cont < lim:
+            if cont <= 1:
+                arr[cont] = 1
             else:
-                arr[cont]= arr[cont-1]+arr[cont-2]
-            cont+=1
+                arr[cont] = arr[cont-1]+arr[cont-2]
+            cont += 1
         return arr
 
     def square(self, lim):
-        arr=np.zeros(lim)
-        cont=0
-        while cont<lim:
-            arr[cont]=cont**2
-            cont+=1
+        arr = np.zeros(lim)
+        cont = 0
+        while cont < lim:
+            arr[cont] = cont**2
+            cont += 1
         return arr
 
-    def p3(self, num):
+    def is_prime(self, num):
         i = 2
         primo = True
         # Reviso y si el modulo del número con algún otro número es 0, es porque no es primo.
@@ -63,23 +65,23 @@ class World:
             i = i + 1
         return primo
 
-    def primes(self,lim):
-        arr=np.zeros(lim)
-        cont=0
+    def primes(self, lim):
+        arr = np.zeros(lim)
+        cont = 0
         i = 0
-        while cont<lim:
-            if self.p3(i) and i!=0 and i!=1:
-                arr[cont]=i
-                cont+=1
-            i+=1
+        while cont < lim:
+            if self.is_prime(i) and i != 0 and i != 1:
+                arr[cont] = i
+                cont += 1
+            i += 1
         return arr
 
-    def quadratic(self,lim):
+    def quadratic(self, lim):
         arr = np.zeros(lim)
         cont = 0
         while cont < lim:
             arr[cont] = 2**cont
-            cont+=1
+            cont += 1
         return arr
 
     def even(self, lim):
@@ -87,10 +89,10 @@ class World:
         cont = 0
         i = 0
         while cont < lim:
-            if i==0:
-                arr[cont]=i
-                cont+=1
-            elif m.fmod(i,2)==0:
+            if i == 0:
+                arr[cont] = i
+                cont += 1
+            elif m.fmod(i, 2) == 0:
                 arr[cont] = i
                 cont += 1
             i += 1
@@ -102,10 +104,10 @@ class World:
         cont = 0
         i = 0
         while cont < lim:
-            if m.fmod(i,2)==1:
+            if m.fmod(i, 2) == 1:
                 arr[cont] = i
                 cont += 1
-        i += 1
+            i += 1
 
         return arr
 
@@ -113,39 +115,39 @@ class World:
         return np.array2string(self.matrix)
 
     def initialize(self):
-        if self.serie==1:
-            arr=self.fib(self.number)
-            cont=0
-            for i in range(0,np.size(self.matrix,axis=1)):
-                for j in range(0,np.size(self.matrix,axis=1)):
-                    self.matrix[i,j]=int(arr[cont])
-                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
-                    cont+=1
-        elif self.serie==2:
-            arr=self.square(self.number)
+        if self.series == 1:
+            arr = self.fib(self.number)
             cont = 0
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
-        elif self.serie==3:
-            arr=self.primes(self.number)
+        elif self.series == 2:
+            arr = self.square(self.number)
             cont = 0
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
-        elif self.serie==4:
-            arr=self.quadratic(self.number)
+        elif self.series == 3:
+            arr = self.primes(self.number)
             cont = 0
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
-        elif self.serie==5:
+        elif self.series == 4:
+            arr = self.quadratic(self.number)
+            cont = 0
+            for i in range(0, np.size(self.matrix, axis=1)):
+                for j in range(0, np.size(self.matrix, axis=1)):
+                    self.matrix[i, j] = int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
+                    cont += 1
+        elif self.series == 5:
             arr = self.even(self.number)
             cont = 0
             for i in range(0, np.size(self.matrix, axis=1)):
@@ -153,8 +155,8 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
-        elif self.serie==6:
-            arr = self.odd( self.number)
+        elif self.series == 6:
+            arr = self.odd(self.number)
             cont = 0
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
@@ -166,7 +168,6 @@ class World:
 # -------------------------------------------------------------------------
 # Constraints.
 # -------------------------------------------------------------------------
-
 
 # RGB Values
 Aqua = (0, 255, 255)
@@ -219,9 +220,9 @@ pos_series = [875, 310]
 # Font sizes.
 f_size_tit = 28
 f_size_btt = 25
-f_size_1   = 140
-f_size_2   = 120
-f_size_3   = 100
+f_size_1   = 80
+f_size_2   = 40
+f_size_3   = 20
 
 # Wood Frame sizes
 size_1 = 195
@@ -229,15 +230,13 @@ size_2 = 146
 size_3 = 117
 
 # -------------------------------------------------------------------------
-# World attributes
+# Interface attributes
 # -------------------------------------------------------------------------
 board_size = 3
 act_size = size_1
 act_f_size = f_size_1
 w = World(board_size, 1)
 w.initialize()
-world_matrix = w.strMatrix
-
 
 # -------------------------------------------------------------------------
 # Init Pygame and initial configurations.
@@ -253,7 +252,6 @@ surface.fill(Black)
 bg = pygame.image.load('Background(or).jpg')
 btt = pygame.image.load('Button.jpg')
 btt_s = pygame.image.load('Button size.jpg')
-
 space = pygame.image.load("game1.png")
 # -------------------------------------------------------------------------
 # Aux methods
@@ -272,22 +270,15 @@ def put_text(text, pos, f_size, color):
     surface.blit(text_surf, text_rect)
 
 
-def button(msg, texture, pos, w, h, action=None):
+def button(msg, texture, pos, width, h, param, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     surface.blit(texture, pos)
-    pos_txt = [pos[0]+np.floor(w/2), pos[1]+np.floor(h/2)]
-    if pos[0]+w > mouse[0] > pos[0] and pos[1]+h > mouse[1] > pos[1]:
+    pos_txt = [pos[0] + np.floor(width / 2), pos[1] + np.floor(h / 2)]
+    if pos[0]+width > mouse[0] > pos[0] and pos[1]+h > mouse[1] > pos[1]:
         put_text(msg, pos_txt, f_size_btt, Black)
         if click[0] == 1 and action != None:
-            if msg.startswith("3"):
-                action(3)
-            elif msg.startswith("4"):
-                action(4)
-            elif msg.startswith("5"):
-                action(5)
-            else:
-                action()
+            action(param)
     else:
         put_text(msg, pos_txt, f_size_btt, White)
 
@@ -297,9 +288,11 @@ def size_change(new_size):
     global act_size
     global space
     global act_f_size
-    global world_matrix
-    board_size = new_size
+    global w
 
+    board_size = new_size
+    w = World(board_size, 1)
+    w.initialize()
     if board_size == 3:
         act_size = size_1
         space = pygame.image.load("game1.png")
@@ -308,12 +301,10 @@ def size_change(new_size):
         act_size = size_2
         space = pygame.image.load("game2.png")
         act_f_size = f_size_2
-        world_matrix = [["1", "4", "7", "e"], ["2", "5", "8", "i"], ["3", "6", "9", "o"], ["u", "a", "k", "p"]]
     elif board_size == 5:
         act_size = size_3
         space = pygame.image.load("game3.png")
         act_f_size = f_size_3
-        world_matrix = [["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"]]
 
 
 def set_challenge():
@@ -326,28 +317,11 @@ def set_adventure():
     is_challenge = False
 
 
-def fib():
-    print("Llamar al mundo, s1")
-
-
-def square():
-    print("Llamar al mundo, s2")
-
-
-def pri():
-    print("Llamar al mundo, s3")
-
-
-def quad():
-    print("Llamar al mundo, s4")
-
-
-def even():
-    print("Llamar al mundo, s5")
-
-
-def odd():
-    print("Llamar al mundo, s6")
+def change_series(num):
+    global w
+    global act_f_size
+    w = World(board_size, num)
+    w.initialize()
 
 
 # -------------------------------------------------------------------------
@@ -396,13 +370,13 @@ while True:
             y = init_pos[1] + (j * act_size)
             act_pos = [x, y]
             surface.blit(space, act_pos)
-            put_text(world_matrix[j][i], [x + np.floor(act_size/2), y + np.floor(act_size/2)], act_f_size, White)
+            put_text(w.strMatrix[j][i], [x + np.floor(act_size / 2), y + np.floor(act_size / 2)], act_f_size, White)
 
     # Buttons board size
     put_text("Board size", pos_b_s, f_size_tit, White)
-    button("3x3", btt_s, pos_btt3x3, 50, 50, size_change)
-    button("4x4", btt_s, pos_btt4x4, 50, 50, size_change)
-    button("5x5", btt_s, pos_btt5x5, 50, 50, size_change)
+    button("3x3", btt_s, pos_btt3x3, 50, 50, 3, size_change)
+    button("4x4", btt_s, pos_btt4x4, 50, 50, 4, size_change)
+    button("5x5", btt_s, pos_btt5x5, 50, 50, 5, size_change)
 
     # Buttons game mode
     put_text("Game mode", pos_mod, f_size_tit, White)
@@ -411,12 +385,12 @@ while True:
 
     # Buttons series
     put_text("Board size", pos_series, f_size_tit, White)
-    button("Fib", btt_s, pos_btt_s1, 50, 50, fib)
-    button("X^2", btt_s, pos_btt_s2, 50, 50, square)
-    button("Pri", btt_s, pos_btt_s3, 50, 50, pri)
-    button("2^n", btt_s, pos_btt_s4, 50, 50, quad)
-    button("Even", btt_s, pos_btt_s5, 50, 50, even)
-    button("Odd", btt_s, pos_btt_s6, 50, 50, odd)
+    button("Fib", btt_s, pos_btt_s1, 50, 50, 1, change_series)
+    button("X^2", btt_s, pos_btt_s2, 50, 50, 2, change_series)
+    button("Pri", btt_s, pos_btt_s3, 50, 50, 3, change_series)
+    button("2^n", btt_s, pos_btt_s4, 50, 50, 4, change_series)
+    button("Even", btt_s, pos_btt_s5, 50, 50, 5, change_series)
+    button("Odd", btt_s, pos_btt_s6, 50, 50, 6, change_series)
 
     # Timer txt
     if is_challenge:
