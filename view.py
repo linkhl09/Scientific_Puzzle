@@ -309,7 +309,16 @@ def size_change(new_size):
 
 def set_mode(mode):
     global is_challenge
+    global counterText
+    global counter
+    global counterUp
+    global counterUpText
     is_challenge = mode
+    counterText='30'.rjust(3)
+    counter=30
+    counterUp=0
+    counterUpText='0'.rjust(3)
+
 
 
 def change_series(num):
@@ -350,9 +359,9 @@ while True:
                     y_change = 0
 
     # Timer
-    counter -= 0.0625
+    counter -= 0.12
     counterText = str(int(counter)).rjust(3)+" sec" if counter > 0 else 'boom!'
-    counterUp += 0.0625
+    counterUp += 0.12
     counterUpText = str(int(counterUp)).rjust(3) + " sec" if counter > 0 else 'boom!'
 
     # Set background
