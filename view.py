@@ -40,7 +40,7 @@ init_pos = np.array([15, 15])
 # Timer survival
 counter, counterText = 30, '30'.rjust(3)
 pos_counter=[850,500]
-isSurvival=False
+is_challenge=False
 
 # Timer adventure
 counterUp, counterUpText = 0, '0'.rjust(3)
@@ -126,11 +126,75 @@ def button(msg, texture, pos, w, h, action=None):
     pos_txt = [pos[0]+np.floor(w/2), pos[1]+np.floor(h/2)]
     if pos[0]+w > mouse[0] > pos[0] and pos[1]+h > mouse[1] > pos[1]:
         put_text(msg, pos_txt, f_size_btt, Black)
-        if click[0] == 1:  # and action != None:
-            # action()
-            print("Esto es para la segunda entrega, que pereza")
+        if click[0] == 1 and action != None:
+            if msg.startswith("3"):
+                action(3)
+            elif msg.startswith("4"):
+                action(4)
+            elif msg.startswith("5"):
+                action(5)
+            else:
+                action()
     else:
         put_text(msg, pos_txt, f_size_btt, White)
+
+
+def size_change(new_size):
+    global board_size
+    global act_size
+    global space
+    global act_f_size
+    global world_matrix
+    board_size = new_size
+
+    if board_size == 3:
+        act_size = size_1
+        space = pygame.image.load("game1.png")
+        act_f_size = f_size_1
+    elif board_size == 4:
+        act_size = size_2
+        space = pygame.image.load("game2.png")
+        act_f_size = f_size_2
+        world_matrix = [["1", "4", "7", "e"], ["2", "5", "8", "i"], ["3", "6", "9", "o"], ["u", "a", "k", "p"]]
+    elif board_size == 5:
+        act_size = size_3
+        space = pygame.image.load("game3.png")
+        act_f_size = f_size_3
+        world_matrix = [["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"], ["1", "4", "7", "e", "4"]]
+
+
+def set_challenge():
+    global is_challenge
+    is_challenge = True
+
+
+def set_adventure():
+    global is_challenge
+    is_challenge = False
+
+
+def fib():
+    print("Llamar al mundo, s1")
+
+
+def square():
+    print("Llamar al mundo, s2")
+
+
+def pri():
+    print("Llamar al mundo, s3")
+
+
+def quad():
+    print("Llamar al mundo, s4")
+
+
+def even():
+    print("Llamar al mundo, s5")
+
+
+def odd():
+    print("Llamar al mundo, s6")
 
 
 # -------------------------------------------------------------------------
@@ -173,19 +237,6 @@ while True:
     surface.blit(bg, [0, 0])
 
     # Board
-    if change:
-        if board_size == 3:
-            act_size = size_1
-            space = pygame.image.load("game1.png")
-            act_f_size = f_size_1
-        elif board_size == 5:
-            act_size = size_2
-            space = pygame.image.load("game2.png")
-            act_f_size = f_size_2
-        elif board_size == 6:
-            act_size = size_3
-            space = pygame.image.load("game3.png")
-            act_f_size = f_size_3
     for i in range(board_size):
         for j in range(board_size):
             x = init_pos[0] + (i * act_size)
@@ -196,26 +247,26 @@ while True:
 
     # Buttons board size
     put_text("Board size", pos_b_s, f_size_tit, White)
-    button("3x3", btt_s, pos_btt3x3, 50, 50)
-    button("4x4", btt_s, pos_btt4x4, 50, 50)
-    button("5x5", btt_s, pos_btt5x5, 50, 50)
+    button("3x3", btt_s, pos_btt3x3, 50, 50, size_change)
+    button("4x4", btt_s, pos_btt4x4, 50, 50, size_change)
+    button("5x5", btt_s, pos_btt5x5, 50, 50, size_change)
 
     # Buttons game mode
     put_text("Game mode", pos_mod, f_size_tit, White)
-    button("Adventure", btt, pos_btt_ma, 170, 50)
-    button("Challenge", btt, pos_btt_md, 170, 50)
+    button("Adventure", btt, pos_btt_ma, 170, 50, set_challenge)
+    button("Challenge", btt, pos_btt_md, 170, 50, set_adventure)
 
     # Buttons series
     put_text("Board size", pos_series, f_size_tit, White)
-    button("Fib", btt_s, pos_btt_s1, 50, 50)
-    button("X^2", btt_s, pos_btt_s2, 50, 50)
-    button("Pri", btt_s, pos_btt_s3, 50, 50)
-    button("2^n", btt_s, pos_btt_s4, 50, 50)
-    button("Even", btt_s, pos_btt_s5, 50, 50)
-    button("Odd", btt_s, pos_btt_s6, 50, 50)
+    button("Fib", btt_s, pos_btt_s1, 50, 50, fib)
+    button("X^2", btt_s, pos_btt_s2, 50, 50, square)
+    button("Pri", btt_s, pos_btt_s3, 50, 50, pri)
+    button("2^n", btt_s, pos_btt_s4, 50, 50, quad)
+    button("Even", btt_s, pos_btt_s5, 50, 50, even)
+    button("Odd", btt_s, pos_btt_s6, 50, 50, odd)
 
     # Timer txt
-    if isSurvival:
+    if is_challenge:
         put_text("Time remaining: ", pos_counter, f_size_tit, White)
         put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
     else:
