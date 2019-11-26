@@ -21,14 +21,19 @@ class World:
     serie = 1
     number = size**2
     matrix = np.zeros((size, size))
-
+    strMatrix = 0
     #1:Fib, 2: X^2, 3: Primes, 4: 2^n, 5: Even, 6: Odd
     def __init__(self, size, serie):
         self.size = size
         self.serie = serie
         self.number=size**2
         self.matrix = np.zeros((size, size))
-
+        if size == 5:
+            self.strMatrix = [["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],["", "", "", "", ""]]
+        elif size == 4:
+            self.strMatrix = [["", "", "", ""], ["", "", "", ""], ["", "", "", ""], ["", "", "", ""]]
+        elif size == 3:
+            self.strMatrix = [["", "", ""], ["", "", ""], ["", "", ""]]
     def fib(self, lim):
         arr=np.zeros(lim)
         cont=0
@@ -114,6 +119,7 @@ class World:
             for i in range(0,np.size(self.matrix,axis=1)):
                 for j in range(0,np.size(self.matrix,axis=1)):
                     self.matrix[i,j]=int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont+=1
         elif self.serie==2:
             arr=self.square(self.number)
@@ -121,6 +127,7 @@ class World:
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
         elif self.serie==3:
             arr=self.primes(self.number)
@@ -128,6 +135,7 @@ class World:
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
         elif self.serie==4:
             arr=self.quadratic(self.number)
@@ -135,6 +143,7 @@ class World:
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
         elif self.serie==5:
             arr = self.even(self.number)
@@ -142,6 +151,7 @@ class World:
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
         elif self.serie==6:
             arr = self.odd( self.number)
@@ -149,6 +159,7 @@ class World:
             for i in range(0, np.size(self.matrix, axis=1)):
                 for j in range(0, np.size(self.matrix, axis=1)):
                     self.matrix[i, j] = int(arr[cont])
+                    self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
 
 
@@ -225,7 +236,7 @@ act_size = size_1
 act_f_size = f_size_1
 w = World(board_size, 1)
 w.initialize()
-# world_matrix = Aquí yace el honor de Andres.
+world_matrix = w.strMatrix
 
 
 # -------------------------------------------------------------------------
@@ -385,7 +396,7 @@ while True:
             y = init_pos[1] + (j * act_size)
             act_pos = [x, y]
             surface.blit(space, act_pos)
-            put_text(world_matrix[i][j], [x + np.floor(act_size/2), y + np.floor(act_size/2)], act_f_size, White)
+            put_text(world_matrix[j][i], [x + np.floor(act_size/2), y + np.floor(act_size/2)], act_f_size, White)
 
     # Buttons board size
     put_text("Board size", pos_b_s, f_size_tit, White)
