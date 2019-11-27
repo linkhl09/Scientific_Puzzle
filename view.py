@@ -359,9 +359,9 @@ while True:
                     y_change = 0
 
     # Timer
-    counter -= 0.12
+    counter -= 0.0625
     counterText = str(int(counter)).rjust(3)+" sec" if counter > 0 else 'boom!'
-    counterUp += 0.12
+    counterUp += 0.0625
     counterUpText = str(int(counterUp)).rjust(3) + " sec" if counter > 0 else 'boom!'
 
     # Set background
@@ -388,7 +388,7 @@ while True:
     button("Challenge", btt, pos_btt_md, 170, 50, 1, set_mode)
 
     # Buttons series
-    put_text("Board size", pos_series, f_size_tit, White)
+    put_text("Series", pos_series, f_size_tit, White)
     button("Fib", btt_s, pos_btt_s1, 50, 50, 1, change_series)
     button("X^2", btt_s, pos_btt_s2, 50, 50, 2, change_series)
     button("Pri", btt_s, pos_btt_s3, 50, 50, 3, change_series)
