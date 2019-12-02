@@ -16,6 +16,7 @@ from pygame.locals import *
 # -------------------------------------------------------------------------
 
 
+# Object used to manage the logic of the program.
 class World:
     size = 3
     series = 1
@@ -23,11 +24,14 @@ class World:
     matrix = np.zeros((size, size))
     strMatrix = 0
 
-    # 1:Fib, 2: X^2, 3: Primes, 4: 2^n, 5: Even, 6: Odd
+    # Constructor of the class.
+    # size: The size of the square matrix.
+    # series: The series wanted. This are the possible values:
+    #         1:Fib, 2: X^2, 3: Primes, 4: 2^n, 5: Even, 6: Odd
     def __init__(self, size, series):
         self.size = size
         self.series = series
-        self.number=size**2
+        self.number = size**2
         self.matrix = np.zeros((size, size))
         if size == 5:
             self.strMatrix = [["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],["", "", "", "", ""]]
@@ -36,6 +40,8 @@ class World:
         elif size == 3:
             self.strMatrix = [["", "", ""], ["", "", ""], ["", "", ""]]
 
+    # Calculates fibonacci till certain number of iterations.
+    # lim: The number of iterations.
     def fib(self, lim):
         arr = np.zeros(lim)
         cont = 0
@@ -47,6 +53,8 @@ class World:
             cont += 1
         return arr
 
+    # Calculates the square series (x^2) till certain number of iterations.
+    # lim: The number of iterations.
     def square(self, lim):
         arr = np.zeros(lim)
         cont = 0
@@ -55,6 +63,7 @@ class World:
             cont += 1
         return arr
 
+    # Check if a number is prime using the definition.
     def is_prime(self, num):
         i = 2
         primo = True
@@ -65,6 +74,8 @@ class World:
             i = i + 1
         return primo
 
+    # Calculates the prime number series till certain number of iterations.
+    # lim: The number of iterations.
     def primes(self, lim):
         arr = np.zeros(lim)
         cont = 0
@@ -76,6 +87,8 @@ class World:
             i += 1
         return arr
 
+    # Calculates the quadratic series (2^x) till certain number of iterations.
+    # lim: The number of iterations.
     def quadratic(self, lim):
         arr = np.zeros(lim)
         cont = 0
@@ -84,6 +97,8 @@ class World:
             cont += 1
         return arr
 
+    # Calculates the even number series till certain number of iterations.
+    # lim: The number of iterations.
     def even(self, lim):
         arr = np.zeros(lim)
         cont = 0
@@ -99,6 +114,8 @@ class World:
 
         return arr
 
+    # Calculates the odd number series till certain number of iterations.
+    # lim: The number of iterations.
     def odd(self, lim):
         arr = np.zeros(lim)
         cont = 0
@@ -111,10 +128,13 @@ class World:
 
         return arr
 
+    # Gets the matrix as an string.
     def get_matrix(self):
         return np.array2string(self.matrix)
 
+    # Initialize the matrix depending on the series and the size.
     def initialize(self):
+        # Fibonacci series.
         if self.series == 1:
             arr = self.fib(self.number)
             cont = 0
@@ -123,6 +143,7 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
+        # Square (X^2) series
         elif self.series == 2:
             arr = self.square(self.number)
             cont = 0
@@ -131,6 +152,7 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
+        # Prime number series
         elif self.series == 3:
             arr = self.primes(self.number)
             cont = 0
@@ -139,6 +161,7 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
+        # Quadratic series
         elif self.series == 4:
             arr = self.quadratic(self.number)
             cont = 0
@@ -147,6 +170,7 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
+        # Even number series
         elif self.series == 5:
             arr = self.even(self.number)
             cont = 0
@@ -155,6 +179,7 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
+        # Odd number series
         elif self.series == 6:
             arr = self.odd(self.number)
             cont = 0
@@ -203,9 +228,9 @@ counterUp, counterUpText = 0, '0'.rjust(3)
 pos_btt3x3 = [790, 70]
 pos_btt4x4 = [850, 70]
 pos_btt5x5 = [910, 70]
-pos_btt_ma = [790, 170]
-pos_btt_md = [790, 230]
-pos_btt_s1 = [790, 330]  # Fibonacci.
+pos_btt_am = [790, 170]  # Adventure mode
+pos_btt_cm = [790, 230]  # Challenge mode
+pos_btt_s1 = [790, 330]  # Fibonacci
 pos_btt_s2 = [850, 330]  # Quadratic
 pos_btt_s3 = [910, 330]  # Primes
 pos_btt_s4 = [790, 390]  # Powers of 2
@@ -258,11 +283,20 @@ space = pygame.image.load("game1.png")
 # -------------------------------------------------------------------------
 
 
+# Defines the text surface and the text rect from the given parameters.
+# text: The text.
+# font: Pygame font for the text.
+# color: CONSTRAINT with the color of the text in RGB
 def text_objects(text, font, color):
     text_surface = font.render(text, True, color)
     return text_surface, text_surface.get_rect()
 
 
+# Puts a text in the given position.
+# text: The text.
+# pos: Position in pixels.
+# f_size: Font size to be used.
+# color: Color of the text.
 def put_text(text, pos, f_size, color):
     py_text = pygame.font.Font('Roboto-Black.ttf', f_size)
     text_surf, text_rect = text_objects(text, py_text, color)
@@ -270,6 +304,13 @@ def put_text(text, pos, f_size, color):
     surface.blit(text_surf, text_rect)
 
 
+# Puts a button with the given texture and message in the interface.
+# msg: msg of the button.
+# texture: texture of the button. Must be an image.
+# pos: Position in pixels.
+# width: width of the button.
+# h: Height of the button.
+# param: Parameter needed for the button function if it has one.
 def button(msg, texture, pos, width, h, param, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -283,6 +324,9 @@ def button(msg, texture, pos, width, h, param, action=None):
         put_text(msg, pos_txt, f_size_btt, White)
 
 
+# Changes the size of the board to the size given by parameter. Also changes the images and the actual size of the text
+# in the board.
+# new_size: new size of the board.
 def size_change(new_size):
     global board_size
     global act_size
@@ -291,8 +335,10 @@ def size_change(new_size):
     global w
 
     board_size = new_size
+    # If we change the board, we are creating a new game, thus, a new world.
     w = World(board_size, 1)
     w.initialize()
+    # Update the interface objects.
     if board_size == 3:
         act_size = size_1
         space = pygame.image.load("game1.png")
@@ -307,6 +353,8 @@ def size_change(new_size):
         act_f_size = f_size_3
 
 
+# Sets the actual mode of the game.
+# mode: the new mode of the game. True if it's challenge, false instead.
 def set_mode(mode):
     global is_challenge
     global counterText
@@ -314,13 +362,15 @@ def set_mode(mode):
     global counterUp
     global counterUpText
     is_challenge = mode
-    counterText='30'.rjust(3)
-    counter=30
-    counterUp=0
-    counterUpText='0'.rjust(3)
+    counterText = '30'.rjust(3)
+    counter = 30
+    counterUp = 0
+    counterUpText = '0'.rjust(3)
 
 
-
+# Changes the actual series in the board.
+# num: The number of the series wanted. This are the possible values:
+#      1:Fib, 2: X^2, 3: Primes, 4: 2^n, 5: Even, 6: Odd
 def change_series(num):
     global w
     global act_f_size
@@ -335,9 +385,11 @@ def change_series(num):
 
 while True:
     for event in pygame.event.get():
+        # Exit the game.
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        # Keyboard events.
         else:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -367,7 +419,7 @@ while True:
     # Set background
     surface.blit(bg, [0, 0])
 
-    # Board
+    # Draws the Board
     for i in range(board_size):
         for j in range(board_size):
             x = init_pos[0] + (i * act_size)
@@ -384,8 +436,8 @@ while True:
 
     # Buttons game mode
     put_text("Game mode", pos_mod, f_size_tit, White)
-    button("Adventure", btt, pos_btt_ma, 170, 50, 0, set_mode)
-    button("Challenge", btt, pos_btt_md, 170, 50, 1, set_mode)
+    button("Adventure", btt, pos_btt_am, 170, 50, 0, set_mode)
+    button("Challenge", btt, pos_btt_cm, 170, 50, 1, set_mode)
 
     # Buttons series
     put_text("Series", pos_series, f_size_tit, White)
