@@ -23,7 +23,7 @@ class World:
     number = size**2
     matrix = np.zeros((size, size))
     strMatrix = 0
-
+    initial = [np.size(matrix, axis=1)-1,np.size(matrix, axis=1)-1]
     # Constructor of the class.
     # size: The size of the square matrix.
     # series: The series wanted. This are the possible values:
@@ -132,6 +132,38 @@ class World:
     def get_matrix(self):
         return np.array2string(self.matrix)
 
+    # Move -1 to specified direction
+    def move(self, dir):
+
+        # 1 means down
+        if dir == 1 and self.initial[0]+1 < np.size(self.matrix, axis=1):
+
+            self.matrix[self.initial[0],self.initial[1]] = self.matrix[self.initial[0]+1,self.initial[1]]
+            self.strMatrix[self.initial[0]][self.initial[1]] = self.strMatrix[self.initial[0]+1][self.initial[1]]
+            self.initial[0] = self.initial[0] + 1
+            self.matrix[self.initial[0], self.initial[1]]=-1
+            self.strMatrix[self.initial[0]][self.initial[1]] = ""
+        # 2 means up
+        elif dir == 2 and self.initial[0]-1 >= 0:
+            self.matrix[self.initial[0], self.initial[1]] = self.matrix[self.initial[0] - 1, self.initial[1]]
+            self.strMatrix[self.initial[0]][self.initial[1]] = self.strMatrix[self.initial[0] - 1][self.initial[1]]
+            self.initial[0] = self.initial[0] - 1
+            self.matrix[self.initial[0], self.initial[1]] = -1
+            self.strMatrix[self.initial[0]][self.initial[1]] = ""
+        # 3 means left
+        elif dir == 3 and self.initial[1]-1 >= 0:
+            self.matrix[self.initial[0], self.initial[1]] = self.matrix[self.initial[0], self.initial[1]-1]
+            self.strMatrix[self.initial[0]][self.initial[1]] = self.strMatrix[self.initial[0]][self.initial[1] -1]
+            self.initial[1] = self.initial[1] - 1
+            self.matrix[self.initial[0], self.initial[1]] = -1
+            self.strMatrix[self.initial[0]][self.initial[1]] = ""
+        # 4 means right
+        elif dir == 4 and self.initial[1]+1 < np.size(self.matrix, axis=1):
+            self.matrix[self.initial[0], self.initial[1]] = self.matrix[self.initial[0], self.initial[1] + 1]
+            self.strMatrix[self.initial[0]][self.initial[1]] = self.strMatrix[self.initial[0]][self.initial[1] + 1]
+            self.initial[1] = self.initial[1] + 1
+            self.matrix[self.initial[0], self.initial[1]] = -1
+            self.strMatrix[self.initial[0]][self.initial[1]] = ""
     # Initialize the matrix depending on the series and the size.
     def initialize(self):
         # Fibonacci series.
@@ -188,8 +220,8 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
-        self.matrix[np.size(self.matrix,axis=1)-1, np.size(self.matrix,axis=1)-1] = -1
-        self.strMatrix[np.size(self.matrix,axis=1)-1] [np.size(self.matrix,axis=1)-1] = ""
+        self.matrix[self.initial[0], self.initial[1]] = -1
+        self.strMatrix[self.initial[0]] [self.initial[1]] = ""
 
 
 # -------------------------------------------------------------------------
@@ -395,13 +427,13 @@ while True:
         else:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    x_change = -1
+                    w.move(3)
                 elif event.key == pygame.K_RIGHT:
-                    x_change = 1
+                    w.move(4)
                 elif event.key == pygame.K_UP:
-                    y_change = -1
+                    w.move(2)
                 elif event.key == pygame.K_DOWN:
-                    y_change = 1
+                    w.move(1)
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     x_change = 0
