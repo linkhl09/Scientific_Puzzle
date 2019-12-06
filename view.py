@@ -427,13 +427,13 @@ while True:
         else:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    w.move(3)
-                elif event.key == pygame.K_RIGHT:
                     w.move(4)
+                elif event.key == pygame.K_RIGHT:
+                    w.move(3)
                 elif event.key == pygame.K_UP:
-                    w.move(2)
-                elif event.key == pygame.K_DOWN:
                     w.move(1)
+                elif event.key == pygame.K_DOWN:
+                    w.move(2)
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT:
                     x_change = 0
