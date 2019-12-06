@@ -188,6 +188,8 @@ class World:
                     self.matrix[i, j] = int(arr[cont])
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
+        self.matrix[np.size(self.matrix,axis=1)-1, np.size(self.matrix,axis=1)-1] = -1
+        self.strMatrix[np.size(self.matrix,axis=1)-1] [np.size(self.matrix,axis=1)-1] = ""
 
 
 # -------------------------------------------------------------------------
