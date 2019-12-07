@@ -23,8 +23,9 @@ class World:
     number = size**2
     matrix = np.zeros((size, size))
     strMatrix = 0
-    initial = [np.size(matrix, axis=1)-1,np.size(matrix, axis=1)-1]
+    initial = [np.size(matrix, axis=1)-1, np.size(matrix, axis=1)-1]
     back = []
+
     # Constructor of the class.
     # size: The size of the square matrix.
     # series: The series wanted. This are the possible values:
@@ -135,16 +136,15 @@ class World:
 
     # Move -1 to specified direction
     def move(self, dir):
-
         # 1 means down
         if dir == 1 and self.initial[0]+1 < np.size(self.matrix, axis=1):
-
-            self.matrix[self.initial[0],self.initial[1]] = self.matrix[self.initial[0]+1,self.initial[1]]
+            self.matrix[self.initial[0], self.initial[1]] = self.matrix[self.initial[0]+1,self.initial[1]]
             self.strMatrix[self.initial[0]][self.initial[1]] = self.strMatrix[self.initial[0]+1][self.initial[1]]
             self.initial[0] = self.initial[0] + 1
-            self.matrix[self.initial[0], self.initial[1]]=-1
+            self.matrix[self.initial[0], self.initial[1]] = -1
             self.strMatrix[self.initial[0]][self.initial[1]] = ""
-            self.back.insert(0, dir)
+            if not solve:
+                self.back.append(dir)
             return dir
         # 2 means up
         elif dir == 2 and self.initial[0]-1 >= 0:
@@ -153,7 +153,8 @@ class World:
             self.initial[0] = self.initial[0] - 1
             self.matrix[self.initial[0], self.initial[1]] = -1
             self.strMatrix[self.initial[0]][self.initial[1]] = ""
-            self.back.insert(0, dir)
+            if not solve:
+                self.back.append(dir)
             return dir
         # 3 means left
         elif dir == 3 and self.initial[1]-1 >= 0:
@@ -162,7 +163,8 @@ class World:
             self.initial[1] = self.initial[1] - 1
             self.matrix[self.initial[0], self.initial[1]] = -1
             self.strMatrix[self.initial[0]][self.initial[1]] = ""
-            self.back.insert(0, dir)
+            if not solve:
+                self.back.append(dir)
             return dir
         # 4 means right
         elif dir == 4 and self.initial[1]+1 < np.size(self.matrix, axis=1):
@@ -171,27 +173,17 @@ class World:
             self.initial[1] = self.initial[1] + 1
             self.matrix[self.initial[0], self.initial[1]] = -1
             self.strMatrix[self.initial[0]][self.initial[1]] = ""
-            self.back.insert(0, dir)
+            if not solve:
+                self.back.append(dir)
             return dir
+
     def randomize(self):
         cont = 0
         while cont < 6 * self.size:
-            mov = np.random.randint(1, 4)
+            mov = np.random.randint(1, 5)
             var = self.move(mov)
             if var == 1 or var == 2 or var == 3 or var == 4:
                 cont += 1
-    def solve(self):
-        actual = self.back
-        for i in range(0, len(actual)):
-            if self.back[i] == 1:
-                self.move(2)
-            elif self.back[i] == 2:
-                self.move(1)
-            elif self.back[i] == 3:
-                self.move(4)
-            elif self.back[i] == 4:
-                self.move(3)
-        self.back = []
 
     # Initialize the matrix depending on the series and the size.
     def initialize(self):
@@ -320,6 +312,7 @@ size_3 = 117
 # -------------------------------------------------------------------------
 # Interface attributes
 # -------------------------------------------------------------------------
+solve = False
 board_size = 3
 act_size = size_1
 act_f_size = f_size_1
@@ -446,38 +439,59 @@ def change_series(num):
 # -------------------------------------------------------------------------
 # Main loop.
 # -------------------------------------------------------------------------
-
-
+cont_sol = 0
 while True:
-    for event in pygame.event.get():
-        # Exit the game.
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        # Keyboard events.
+    if not solve:
+        for event in pygame.event.get():
+            # Exit the game.
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            # Keyboard events.
+            else:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        w.move(4)
+                    elif event.key == pygame.K_RIGHT:
+                        w.move(3)
+                    elif event.key == pygame.K_UP:
+                        w.move(1)
+                    elif event.key == pygame.K_DOWN:
+                        w.move(2)
+                    elif event.key == pygame.K_r:
+                        solve = True
+                    print(w.back)
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        x_change = 0
+                    elif event.key == pygame.K_RIGHT:
+                        x_change = 0
+                    elif event.key == pygame.K_UP:
+                        y_change = 0
+                    elif event.key == pygame.K_DOWN:
+                        y_change = 0
+                    elif event.key == pygame.K_r:
+                        y_change = 0
+    else:
+        pygame.time.wait(500)
+        if len(w.back) > 0:
+            last_move = w.back.pop()
+            print(w.back)
+            if last_move == 1:
+                w.move(2)
+                print("2")
+            elif last_move == 2:
+                w.move(1)
+                print("1")
+            elif last_move == 3:
+                w.move(4)
+                print("4")
+            elif last_move == 4:
+                w.move(3)
+                print("3")
         else:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    w.move(4)
-                elif event.key == pygame.K_RIGHT:
-                    w.move(3)
-                elif event.key == pygame.K_UP:
-                    w.move(1)
-                elif event.key == pygame.K_DOWN:
-                    w.move(2)
-                elif event.key == pygame.K_r:
-                    w.solve()
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
-                    x_change = 0
-                elif event.key == pygame.K_RIGHT:
-                    x_change = 0
-                elif event.key == pygame.K_UP:
-                    y_change = 0
-                elif event.key == pygame.K_DOWN:
-                    y_change = 0
-                elif event.key == pygame.K_r:
-                    y_change = 0
+            solve = False
+
 
     # Timer
     counter -= 0.0625
