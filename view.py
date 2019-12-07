@@ -22,6 +22,7 @@ class World:
     series = 1
     number = size**2
     matrix = np.zeros((size, size))
+    startMatrix = matrix
     strMatrix = 0
     initial = [np.size(matrix, axis=1)-1, np.size(matrix, axis=1)-1]
     back = []
@@ -177,6 +178,8 @@ class World:
                 self.back.append(dir)
             return dir
 
+    def check(self):
+        return np.array_equal(self.matrix, self.startMatrix)
     def randomize(self):
         cont = 0
         while cont < 6 * self.size:
@@ -243,6 +246,7 @@ class World:
                     cont += 1
         self.matrix[self.initial[0], self.initial[1]] = -1
         self.strMatrix[self.initial[0]] [self.initial[1]] = ""
+        self.startMatrix = self.matrix
 
 
 # -------------------------------------------------------------------------
@@ -313,6 +317,7 @@ size_3 = 117
 # Interface attributes
 # -------------------------------------------------------------------------
 solve = False
+win = False
 board_size = 3
 act_size = size_1
 act_f_size = f_size_1
@@ -441,102 +446,103 @@ def change_series(num):
 # -------------------------------------------------------------------------
 cont_sol = 0
 while True:
-    if not solve:
-        for event in pygame.event.get():
-            # Exit the game.
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            # Keyboard events.
-            else:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        w.move(4)
-                    elif event.key == pygame.K_RIGHT:
-                        w.move(3)
-                    elif event.key == pygame.K_UP:
-                        w.move(1)
-                    elif event.key == pygame.K_DOWN:
-                        w.move(2)
-                    elif event.key == pygame.K_r:
-                        solve = True
-                    print(w.back)
-                elif event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        x_change = 0
-                    elif event.key == pygame.K_RIGHT:
-                        x_change = 0
-                    elif event.key == pygame.K_UP:
-                        y_change = 0
-                    elif event.key == pygame.K_DOWN:
-                        y_change = 0
-                    elif event.key == pygame.K_r:
-                        y_change = 0
-    else:
-        pygame.time.wait(500)
-        if len(w.back) > 0:
-            last_move = w.back.pop()
-            print(w.back)
-            if last_move == 1:
-                w.move(2)
-                print("2")
-            elif last_move == 2:
-                w.move(1)
-                print("1")
-            elif last_move == 3:
-                w.move(4)
-                print("4")
-            elif last_move == 4:
-                w.move(3)
-                print("3")
+    if not win:
+        if not solve:
+            for event in pygame.event.get():
+                # Exit the game.
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                # Keyboard events.
+                else:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_LEFT:
+                            w.move(4)
+                            win = w.check()
+                        elif event.key == pygame.K_RIGHT:
+                            w.move(3)
+                            win = w.check()
+                        elif event.key == pygame.K_UP:
+                            w.move(1)
+                            win = w.check()
+                        elif event.key == pygame.K_DOWN:
+                            w.move(2)
+                            win = w.check()
+                        elif event.key == pygame.K_r:
+                            solve = True
+                    elif event.type == pygame.KEYUP:
+                        if event.key == pygame.K_LEFT:
+                            x_change = 0
+                        elif event.key == pygame.K_RIGHT:
+                            x_change = 0
+                        elif event.key == pygame.K_UP:
+                            y_change = 0
+                        elif event.key == pygame.K_DOWN:
+                            y_change = 0
+                        elif event.key == pygame.K_r:
+                            y_change = 0
         else:
-            solve = False
+            pygame.time.wait(500)
+            if len(w.back) > 0:
+                last_move = w.back.pop()
+                if last_move == 1:
+                    w.move(2)
+                elif last_move == 2:
+                    w.move(1)
+                elif last_move == 3:
+                    w.move(4)
+                elif last_move == 4:
+                    w.move(3)
+            else:
+                solve = False
 
 
-    # Timer
-    counter -= 0.0625
-    counterText = str(int(counter)).rjust(3)+" sec" if counter > 0 else 'boom!'
-    counterUp += 0.0625
-    counterUpText = str(int(counterUp)).rjust(3) + " sec" if counter > 0 else 'boom!'
+        # Timer
+        counter -= 0.0625
+        counterText = str(int(counter)).rjust(3)+" sec" if counter > 0 else 'boom!'
+        counterUp += 0.0625
+        counterUpText = str(int(counterUp)).rjust(3) + " sec" if counter > 0 else 'boom!'
 
-    # Set background
-    surface.blit(bg, [0, 0])
+        # Set background
+        surface.blit(bg, [0, 0])
 
-    # Draws the Board
-    for i in range(board_size):
-        for j in range(board_size):
-            x = init_pos[0] + (i * act_size)
-            y = init_pos[1] + (j * act_size)
-            act_pos = [x, y]
-            surface.blit(space, act_pos)
-            put_text(w.strMatrix[j][i], [x + np.floor(act_size / 2), y + np.floor(act_size / 2)], act_f_size, White)
+        # Draws the Board
+        for i in range(board_size):
+            for j in range(board_size):
+                x = init_pos[0] + (i * act_size)
+                y = init_pos[1] + (j * act_size)
+                act_pos = [x, y]
+                surface.blit(space, act_pos)
+                put_text(w.strMatrix[j][i], [x + np.floor(act_size / 2), y + np.floor(act_size / 2)], act_f_size, White)
 
-    # Buttons board size
-    put_text("Board size", pos_b_s, f_size_tit, White)
-    button("3x3", btt_s, pos_btt3x3, 50, 50, 3, size_change)
-    button("4x4", btt_s, pos_btt4x4, 50, 50, 4, size_change)
-    button("5x5", btt_s, pos_btt5x5, 50, 50, 5, size_change)
+        # Buttons board size
+        put_text("Board size", pos_b_s, f_size_tit, White)
+        button("3x3", btt_s, pos_btt3x3, 50, 50, 3, size_change)
+        button("4x4", btt_s, pos_btt4x4, 50, 50, 4, size_change)
+        button("5x5", btt_s, pos_btt5x5, 50, 50, 5, size_change)
 
-    # Buttons game mode
-    put_text("Game mode", pos_mod, f_size_tit, White)
-    button("Adventure", btt, pos_btt_am, 170, 50, 0, set_mode)
-    button("Challenge", btt, pos_btt_cm, 170, 50, 1, set_mode)
+        # Buttons game mode
+        put_text("Game mode", pos_mod, f_size_tit, White)
+        button("Adventure", btt, pos_btt_am, 170, 50, 0, set_mode)
+        button("Challenge", btt, pos_btt_cm, 170, 50, 1, set_mode)
 
-    # Buttons series
-    put_text("Series", pos_series, f_size_tit, White)
-    button("Fib", btt_s, pos_btt_s1, 50, 50, 1, change_series)
-    button("X^2", btt_s, pos_btt_s2, 50, 50, 2, change_series)
-    button("Pri", btt_s, pos_btt_s3, 50, 50, 3, change_series)
-    button("2^n", btt_s, pos_btt_s4, 50, 50, 4, change_series)
-    button("Even", btt_s, pos_btt_s5, 50, 50, 5, change_series)
-    button("Odd", btt_s, pos_btt_s6, 50, 50, 6, change_series)
+        # Buttons series
+        put_text("Series", pos_series, f_size_tit, White)
+        button("Fib", btt_s, pos_btt_s1, 50, 50, 1, change_series)
+        button("X^2", btt_s, pos_btt_s2, 50, 50, 2, change_series)
+        button("Pri", btt_s, pos_btt_s3, 50, 50, 3, change_series)
+        button("2^n", btt_s, pos_btt_s4, 50, 50, 4, change_series)
+        button("Even", btt_s, pos_btt_s5, 50, 50, 5, change_series)
+        button("Odd", btt_s, pos_btt_s6, 50, 50, 6, change_series)
 
-    # Timer txt
-    if is_challenge:
-        put_text("Time remaining: ", pos_counter, f_size_tit, White)
-        put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+        # Timer txt
+        if is_challenge:
+            put_text("Time remaining: ", pos_counter, f_size_tit, White)
+            put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+        else:
+            put_text("Time Elapsed: ", pos_counter, f_size_tit, White)
+            put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
     else:
-        put_text("Time Elapsed: ", pos_counter, f_size_tit, White)
-        put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+        #pues ahora si gana
     pygame.display.update()  # draws the Surface object returned by pygame.display.set_mode() to the screen
     clock.tick(60)  # 30 Frames per second
