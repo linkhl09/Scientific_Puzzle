@@ -23,8 +23,8 @@ class World:
     number = size**2
     matrix = np.zeros((size, size))
     startMatrix = np.zeros((size, size))
+    initial = [np.size(matrix, axis=1) - 1, np.size(matrix, axis=1) - 1]
     strMatrix = 0
-    initial = [np.size(matrix, axis=1)-1, np.size(matrix, axis=1)-1]
     back = []
 
     # Constructor of the class.
@@ -37,6 +37,7 @@ class World:
         self.number = size**2
         self.matrix = np.zeros((size, size))
         self.startMatrix  = np.zeros((size, size))
+        self.initial = [self.size - 1, self.size - 1]
         if size == 5:
             self.strMatrix = [["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],["", "", "", "", ""]]
         elif size == 4:
@@ -179,7 +180,6 @@ class World:
                 self.back.append(dir)
             return dir
 
-
     def randomize(self):
         cont = 0
         while cont < 6 * self.size:
@@ -245,16 +245,17 @@ class World:
                     self.strMatrix[i][j] = str(int(self.matrix[i, j]))
                     cont += 1
         self.matrix[self.initial[0], self.initial[1]] = -1
-        self.strMatrix[self.initial[0]] [self.initial[1]] = ""
+        self.strMatrix[self.initial[0]][self.initial[1]] = ""
         self.startMatrix = np.array(self.matrix).copy()
+        self.back = []
 
     def check(self):
         return np.array_equal(self.matrix, self.startMatrix)
 
+
 # -------------------------------------------------------------------------
 # Constraints.
 # -------------------------------------------------------------------------
-
 # RGB Values
 Aqua = (0, 255, 255)
 Black = (0, 0, 0)
@@ -279,11 +280,12 @@ init_pos = np.array([15, 15])
 
 # Timer survival
 counter, counterText = 30, '30'.rjust(3)
-pos_counter = [850, 500]
 is_challenge = False
 
 # Timer adventure
 counterUp, counterUpText = 0, '0'.rjust(3)
+
+pos_counter = [850, 500]
 
 # Button positions
 pos_btt3x3 = [790, 70]
@@ -297,11 +299,17 @@ pos_btt_s3 = [910, 330]  # Primes
 pos_btt_s4 = [790, 390]  # Powers of 2
 pos_btt_s5 = [850, 390]  # Even Numbers
 pos_btt_s6 = [910, 390]  # Odd Numbers
+pos_btt_st = [790, 500]
+pos_btt_ng1= [790, 290]
+pos_btt_ng2= [590, 475]
+pos_btt_ex = [780, 475]
+
 
 # Text positions
 pos_b_s    = [875, 45]
 pos_mod    = [875, 150]
 pos_series = [875, 310]
+pos_end    = [300, 500]
 
 # Font sizes.
 f_size_tit = 28
@@ -319,7 +327,13 @@ size_3 = 117
 # Interface attributes
 # -------------------------------------------------------------------------
 solve = False
+solve_speed = 500
+enable = True
 win = False
+lose = False
+in_settings = True
+
+
 board_size = 3
 act_size = size_1
 act_f_size = f_size_1
@@ -380,7 +394,7 @@ def button(msg, texture, pos, width, h, param, action=None):
     click = pygame.mouse.get_pressed()
     surface.blit(texture, pos)
     pos_txt = [pos[0] + np.floor(width / 2), pos[1] + np.floor(h / 2)]
-    if pos[0]+width > mouse[0] > pos[0] and pos[1]+h > mouse[1] > pos[1]:
+    if pos[0]+width > mouse[0] > pos[0] and pos[1]+h > mouse[1] > pos[1]: # and in_settings:
         put_text(msg, pos_txt, f_size_btt, Black)
         if click[0] == 1 and action != None:
             action(param)
@@ -397,6 +411,9 @@ def size_change(new_size):
     global space
     global act_f_size
     global w
+    global counter
+    global counterText
+    global solve_speed
 
     board_size = new_size
     # If we change the board, we are creating a new game, thus, a new world.
@@ -408,14 +425,20 @@ def size_change(new_size):
         act_size = size_1
         space = pygame.image.load("game1.png")
         act_f_size = f_size_1
+        counter, counterText = 30, '30'.rjust(3)
+        solve_speed = 500
     elif board_size == 4:
         act_size = size_2
         space = pygame.image.load("game2.png")
         act_f_size = f_size_2
+        counter, counterText = 60, '60'.rjust(3)
+        solve_speed = 250
     elif board_size == 5:
         act_size = size_3
         space = pygame.image.load("game3.png")
         act_f_size = f_size_3
+        counter, counterText = 120, '120'.rjust(3)
+        solve_speed = 200
 
 
 # Sets the actual mode of the game.
@@ -441,14 +464,56 @@ def change_series(num):
     global act_f_size
     w = World(board_size, num)
     w.initialize()
+    w.randomize()
+
+
+def utils(mode):
+    global in_settings
+    global enable
+
+    # Exit settings
+    if mode == 0:
+        in_settings = False
+    # Solve the puzzle
+    elif mode == 1:
+        global solve
+        solve = True
+    # Restart
+    elif mode == 2 or mode == 3:
+        global w
+        global win
+        global lose
+        global counter
+        global counterText
+        global counterUp
+        global counterUpText
+
+        win = False
+        lose = False
+        enable = True
+        if mode == 3:
+            in_settings = True
+
+        w.randomize()
+        counterUp, counterUpText = 0, '0'.rjust(3)
+        if w.size == 3:
+            counter, counterText = 30, '30'.rjust(3)
+        elif w.size == 4:
+            counter, counterText = 60, '60'.rjust(3)
+        else:
+            counter, counterText = 120, '120'.rjust(3)
+    # New game
+
+    elif mode == 4:
+        pygame.quit()
+        sys.exit()
 
 
 # -------------------------------------------------------------------------
 # Main loop.
 # -------------------------------------------------------------------------
-cont_sol = 0
 while True:
-    if not win:
+    if not win and not lose:
         if not solve:
             for event in pygame.event.get():
                 # Exit the game.
@@ -456,36 +521,26 @@ while True:
                     pygame.quit()
                     sys.exit()
                 # Keyboard events.
-                else:
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_LEFT:
-                            w.move(4)
-                            win = w.check()
-                        elif event.key == pygame.K_RIGHT:
-                            w.move(3)
-                            win = w.check()
-                        elif event.key == pygame.K_UP:
-                            w.move(1)
-                            win = w.check()
-                        elif event.key == pygame.K_DOWN:
-                            w.move(2)
-                            win = w.check()
-                        elif event.key == pygame.K_r:
-                            solve = True
-                    elif event.type == pygame.KEYUP:
-                        if event.key == pygame.K_LEFT:
-                            x_change = 0
-                        elif event.key == pygame.K_RIGHT:
-                            x_change = 0
-                        elif event.key == pygame.K_UP:
-                            y_change = 0
-                        elif event.key == pygame.K_DOWN:
-                            y_change = 0
-                        elif event.key == pygame.K_r:
-                            y_change = 0
-        else:
-            pygame.time.wait(500)
-            if len(w.back) > 0:
+                if enable:
+                    if not in_settings:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_LEFT:
+                                w.move(4)
+                                win = w.check()
+                            elif event.key == pygame.K_RIGHT:
+                                w.move(3)
+                                win = w.check()
+                            elif event.key == pygame.K_UP:
+                                w.move(1)
+                                win = w.check()
+                            elif event.key == pygame.K_DOWN:
+                                w.move(2)
+                                win = w.check()
+                            elif event.key == pygame.K_r:
+                                solve = True
+        elif solve:
+            pygame.time.wait(solve_speed)
+            if len(w.back) > 0 and not w.check():
                 last_move = w.back.pop()
                 if last_move == 1:
                     w.move(2)
@@ -497,17 +552,10 @@ while True:
                     w.move(3)
             else:
                 solve = False
-
-
-        # Timer
-        counter -= 0.0625
-        counterText = str(int(counter)).rjust(3)+" sec" if counter > 0 else 'boom!'
-        counterUp += 0.0625
-        counterUpText = str(int(counterUp)).rjust(3) + " sec" if counter > 0 else 'boom!'
+                enable = False
 
         # Set background
         surface.blit(bg, [0, 0])
-
         # Draws the Board
         for i in range(board_size):
             for j in range(board_size):
@@ -517,36 +565,63 @@ while True:
                 surface.blit(space, act_pos)
                 put_text(w.strMatrix[j][i], [x + np.floor(act_size / 2), y + np.floor(act_size / 2)], act_f_size, White)
 
-        # Buttons board size
-        put_text("Board size", pos_b_s, f_size_tit, White)
-        button("3x3", btt_s, pos_btt3x3, 50, 50, 3, size_change)
-        button("4x4", btt_s, pos_btt4x4, 50, 50, 4, size_change)
-        button("5x5", btt_s, pos_btt5x5, 50, 50, 5, size_change)
+        if in_settings:
+            # Buttons board size
+            put_text("Board size", pos_b_s, f_size_tit, White)
+            button("3x3", btt_s, pos_btt3x3, 50, 50, 3, size_change)
+            button("4x4", btt_s, pos_btt4x4, 50, 50, 4, size_change)
+            button("5x5", btt_s, pos_btt5x5, 50, 50, 5, size_change)
 
-        # Buttons game mode
-        put_text("Game mode", pos_mod, f_size_tit, White)
-        button("Adventure", btt, pos_btt_am, 170, 50, 0, set_mode)
-        button("Challenge", btt, pos_btt_cm, 170, 50, 1, set_mode)
+            # Buttons game mode
+            put_text("Game mode", pos_mod, f_size_tit, White)
+            button("Adventure", btt, pos_btt_am, 170, 50, 0, set_mode)
+            button("Challenge", btt, pos_btt_cm, 170, 50, 1, set_mode)
 
-        # Buttons series
-        put_text("Series", pos_series, f_size_tit, White)
-        button("Fib", btt_s, pos_btt_s1, 50, 50, 1, change_series)
-        button("X^2", btt_s, pos_btt_s2, 50, 50, 2, change_series)
-        button("Pri", btt_s, pos_btt_s3, 50, 50, 3, change_series)
-        button("2^n", btt_s, pos_btt_s4, 50, 50, 4, change_series)
-        button("Even", btt_s, pos_btt_s5, 50, 50, 5, change_series)
-        button("Odd", btt_s, pos_btt_s6, 50, 50, 6, change_series)
-
-        # Timer txt
-        if is_challenge:
-            put_text("Time remaining: ", pos_counter, f_size_tit, White)
-            put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+            # Buttons series
+            put_text("Series", pos_series, f_size_tit, White)
+            button("Fib", btt_s, pos_btt_s1, 50, 50, 1, change_series)
+            button("X^2", btt_s, pos_btt_s2, 50, 50, 2, change_series)
+            button("Pri", btt_s, pos_btt_s3, 50, 50, 3, change_series)
+            button("2^n", btt_s, pos_btt_s4, 50, 50, 4, change_series)
+            button("Even", btt_s, pos_btt_s5, 50, 50, 5, change_series)
+            button("Odd", btt_s, pos_btt_s6, 50, 50, 6, change_series)
+            button("Start", btt, pos_btt_st, 170, 50, 0, utils)
         else:
-            put_text("Time Elapsed: ", pos_counter, f_size_tit, White)
-            put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+            if not solve and enable:
+                button("Solve", btt, pos_btt_am, 170, 50, 1, utils)
+            button("Restart", btt, pos_btt_cm, 170, 50, 2, utils)
+            button("New game", btt, pos_btt_ng1, 170, 50, 3, utils)
+
+            # Timer
+            if is_challenge:
+                counter -= 0.03125
+                counterText = str(int(counter)).rjust(3) + " sec"
+                if counter < 0:
+                    lose = True
+                put_text("Time remaining: ", pos_counter, f_size_tit, White)
+                put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+            else:
+                counterUp += 0.03125
+                counterUpText = str(int(counterUp)).rjust(3) + " sec"
+                put_text("Time Elapsed: ", pos_counter, f_size_tit, White)
+                put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
+    # End of the game.
     else:
-        #pues ahora si gana
         # Set background
         surface.blit(bg, [0, 0])
+        # Print msg
+        if win:
+            put_text("You win!!!", pos_end, 100, White)
+        else:
+            put_text("You Lose!!!", pos_end, 100, White)
+
+        button("New game", btt, pos_btt_ng2, 170, 50, 3, utils)
+        button("Exit", btt, pos_btt_ex, 170, 50, 4, utils)
+        for event in pygame.event.get():
+            # Exit the game.
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
     pygame.display.update()  # draws the Surface object returned by pygame.display.set_mode() to the screen
     clock.tick(60)  # 30 Frames per second
