@@ -22,7 +22,7 @@ class World:
     series = 1
     number = size**2
     matrix = np.zeros((size, size))
-    startMatrix = matrix
+    startMatrix = np.zeros((size, size))
     strMatrix = 0
     initial = [np.size(matrix, axis=1)-1, np.size(matrix, axis=1)-1]
     back = []
@@ -36,6 +36,7 @@ class World:
         self.series = series
         self.number = size**2
         self.matrix = np.zeros((size, size))
+        self.startMatrix  = np.zeros((size, size))
         if size == 5:
             self.strMatrix = [["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],["", "", "", "", ""]]
         elif size == 4:
@@ -178,8 +179,7 @@ class World:
                 self.back.append(dir)
             return dir
 
-    def check(self):
-        return np.array_equal(self.matrix, self.startMatrix)
+
     def randomize(self):
         cont = 0
         while cont < 6 * self.size:
@@ -246,8 +246,10 @@ class World:
                     cont += 1
         self.matrix[self.initial[0], self.initial[1]] = -1
         self.strMatrix[self.initial[0]] [self.initial[1]] = ""
-        self.startMatrix = self.matrix
+        self.startMatrix = np.array(self.matrix).copy()
 
+    def check(self):
+        return np.array_equal(self.matrix, self.startMatrix)
 
 # -------------------------------------------------------------------------
 # Constraints.
@@ -544,5 +546,7 @@ while True:
             put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
     else:
         #pues ahora si gana
+        # Set background
+        surface.blit(bg, [0, 0])
     pygame.display.update()  # draws the Surface object returned by pygame.display.set_mode() to the screen
     clock.tick(60)  # 30 Frames per second
