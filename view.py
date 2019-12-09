@@ -3,7 +3,6 @@
 # Andrés Hernández: linkhl09
 # Felipe Parra: Parr0sky
 # -------------------------------------------------------------------------
-from tkinter import W
 
 import numpy as np
 import pygame
@@ -39,7 +38,7 @@ class World:
         self.startMatrix  = np.zeros((size, size))
         self.initial = [self.size - 1, self.size - 1]
         if size == 5:
-            self.strMatrix = [["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""],["", "", "", "", ""]]
+            self.strMatrix = [["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""], ["", "", "", "", ""]]
         elif size == 4:
             self.strMatrix = [["", "", "", ""], ["", "", "", ""], ["", "", "", ""], ["", "", "", ""]]
         elif size == 3:
