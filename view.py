@@ -3,7 +3,6 @@
 # Andrés Hernández: linkhl09
 # Felipe Parra: Parr0sky
 # -------------------------------------------------------------------------
-
 import numpy as np
 import pygame
 import sys
