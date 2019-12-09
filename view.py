@@ -179,6 +179,7 @@ class World:
                 self.back.append(dir)
             return dir
 
+    # Moves the table with random moves.
     def randomize(self):
         cont = 0
         while cont < 6 * self.size:
@@ -248,6 +249,7 @@ class World:
         self.startMatrix = np.array(self.matrix).copy()
         self.back = []
 
+    # Check if you win!
     def check(self):
         return np.array_equal(self.matrix, self.startMatrix)
 
@@ -256,23 +258,8 @@ class World:
 # Constraints.
 # -------------------------------------------------------------------------
 # RGB Values
-Aqua = (0, 255, 255)
 Black = (0, 0, 0)
-Blue = (0, 0, 255)
-Fuchsia = (255, 0, 255)
-Gray = (128, 128, 128)
-Green = (0, 128, 0)
-Lime = (0, 255, 0)
-Maroon = (128, 0, 0)
-Navy_Blue = (0, 0, 128)
-Olive = (128, 128, 0)
-Purple = (128, 0, 128)
-Red = (255, 0, 0)
-Silver = (192, 192, 192)
-Teal = (0, 128, 128)
 White = (255, 255, 255)
-Yellow = (255, 255, 0)
-saddleBrown = (139, 69, 19)
 
 # Board init pos
 init_pos = np.array([15, 15])
@@ -284,6 +271,7 @@ is_challenge = False
 # Timer adventure
 counterUp, counterUpText = 0, '0'.rjust(3)
 
+# Timer position
 pos_counter = [850, 500]
 
 # Button positions
@@ -298,24 +286,25 @@ pos_btt_s3 = [910, 330]  # Primes
 pos_btt_s4 = [790, 390]  # Powers of 2
 pos_btt_s5 = [850, 390]  # Even Numbers
 pos_btt_s6 = [910, 390]  # Odd Numbers
-pos_btt_st = [790, 500]
-pos_btt_ng1= [790, 290]
-pos_btt_ng2= [590, 475]
-pos_btt_ex = [780, 475]
+pos_btt_st = [790, 500]  # Start game
+pos_btt_g1 = [790, 290]  # New game (while playing)
+pos_btt_g2 = [590, 475]  # New game (when win - lose)
+pos_btt_ex = [780, 475]  # Exit
 
 
 # Text positions
-pos_b_s    = [875, 45]
-pos_mod    = [875, 150]
+pos_b_s    = [875, 45]   # Board Size
+pos_mod    = [875, 150]  # Mode
 pos_series = [875, 310]
-pos_end    = [300, 500]
+pos_end    = [300, 500]  # Win - Lose
 
 # Font sizes.
 f_size_tit = 28
 f_size_btt = 25
-f_size_1   = 80
-f_size_2   = 40
-f_size_3   = 20
+f_size_1   = 80  # numbers 3x3
+f_size_2   = 40  # numbers 4x4
+f_size_3   = 20  # numbers 5x5
+f_size_end = 100
 
 # Wood Frame sizes
 size_1 = 195
@@ -325,12 +314,12 @@ size_3 = 117
 # -------------------------------------------------------------------------
 # Interface attributes
 # -------------------------------------------------------------------------
-solve = False
-solve_speed = 500
-enable = True
+solve = False       # If option of solution was chosen.
+solve_speed = 500   # Depends on the board size.
+enable = True       # Movement enable
 win = False
 lose = False
-in_settings = True
+in_settings = True  # Settings screen
 
 
 board_size = 3
@@ -355,10 +344,11 @@ bg = pygame.image.load('Background(or).jpg')
 btt = pygame.image.load('Button.jpg')
 btt_s = pygame.image.load('Button size.jpg')
 space = pygame.image.load("game1.png")
+
+
 # -------------------------------------------------------------------------
 # Aux methods
 # -------------------------------------------------------------------------
-
 
 # Defines the text surface and the text rect from the given parameters.
 # text: The text.
@@ -400,6 +390,10 @@ def button(msg, texture, pos, width, h, param, action=None):
     else:
         put_text(msg, pos_txt, f_size_btt, White)
 
+
+# -------------------------------------------------------------------------
+# Button methods
+# -------------------------------------------------------------------------
 
 # Changes the size of the board to the size given by parameter. Also changes the images and the actual size of the text
 # in the board.
@@ -466,6 +460,12 @@ def change_series(num):
     w.randomize()
 
 
+# Defined for the temporal buttons.
+# mode 0: Exit the settings (starts the game).
+# mode 1: Solves the puzzle, interactions are removed.
+# mode 2: Restart the game with the same configurations.
+# mode 3: Creates a new game (return to the settings).
+# mode 4: Exits the game when you win-lose.
 def utils(mode):
     global in_settings
     global enable
@@ -477,7 +477,7 @@ def utils(mode):
     elif mode == 1:
         global solve
         solve = True
-    # Restart
+    # Restart or new game
     elif mode == 2 or mode == 3:
         global w
         global win
@@ -490,9 +490,10 @@ def utils(mode):
         win = False
         lose = False
         enable = True
-        if mode == 3:
+        if mode == 3:  # Only if we are starting a new game we have to get back to settings.
             in_settings = True
 
+        w.initialize()
         w.randomize()
         counterUp, counterUpText = 0, '0'.rjust(3)
         if w.size == 3:
@@ -512,8 +513,10 @@ def utils(mode):
 # Main loop.
 # -------------------------------------------------------------------------
 while True:
-    if not win and not lose:
-        if not solve:
+    # Set background
+    surface.blit(bg, [0, 0])
+    if not win and not lose:  # Screen with the board.
+        if not solve:  # If you have not given up, you can play.
             for event in pygame.event.get():
                 # Exit the game.
                 if event.type == pygame.QUIT:
@@ -537,10 +540,11 @@ while True:
                                 win = w.check()
                             elif event.key == pygame.K_r:
                                 solve = True
-        elif solve:
-            pygame.time.wait(solve_speed)
-            if len(w.back) > 0 and not w.check():
-                last_move = w.back.pop()
+        elif solve:  # If you have give up. Then you can't play, just watch how you failed :D
+            pygame.time.wait(solve_speed)  # Timer for the animation.
+            if len(w.back) > 0 and not w.check():  # While we have moves for the traceback, we move the board.
+                last_move = w.back.pop()  # We remove the move that we are rolling back.
+                # And finally we roll back the movement.
                 if last_move == 1:
                     w.move(2)
                 elif last_move == 2:
@@ -550,11 +554,10 @@ while True:
                 elif last_move == 4:
                     w.move(3)
             else:
+                # End the iterative cycle.
                 solve = False
                 enable = False
 
-        # Set background
-        surface.blit(bg, [0, 0])
         # Draws the Board
         for i in range(board_size):
             for j in range(board_size):
@@ -564,6 +567,7 @@ while True:
                 surface.blit(space, act_pos)
                 put_text(w.strMatrix[j][i], [x + np.floor(act_size / 2), y + np.floor(act_size / 2)], act_f_size, White)
 
+        # Draws the settings menu
         if in_settings:
             # Buttons board size
             put_text("Board size", pos_b_s, f_size_tit, White)
@@ -585,36 +589,35 @@ while True:
             button("Even", btt_s, pos_btt_s5, 50, 50, 5, change_series)
             button("Odd", btt_s, pos_btt_s6, 50, 50, 6, change_series)
             button("Start", btt, pos_btt_st, 170, 50, 0, utils)
+        # Draw the in game menu
         else:
-            if not solve and enable:
-                button("Solve", btt, pos_btt_am, 170, 50, 1, utils)
             button("Restart", btt, pos_btt_cm, 170, 50, 2, utils)
-            button("New game", btt, pos_btt_ng1, 170, 50, 3, utils)
+            button("New game", btt, pos_btt_g1, 170, 50, 3, utils)
+
+            if not solve and enable:  # Stops the timer and removes the solution button.
+                button("Solve", btt, pos_btt_am, 170, 50, 1, utils)
+                counter -= 0.03125
+                counterUp += 0.03125
 
             # Timer
             if is_challenge:
-                counter -= 0.03125
-                counterText = str(int(counter)).rjust(3) + " sec"
                 if counter < 0:
                     lose = True
+                counterText = str(int(counter)).rjust(3) + " sec"
                 put_text("Time remaining: ", pos_counter, f_size_tit, White)
                 put_text(counterText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
             else:
-                counterUp += 0.03125
                 counterUpText = str(int(counterUp)).rjust(3) + " sec"
                 put_text("Time Elapsed: ", pos_counter, f_size_tit, White)
                 put_text(counterUpText, (pos_counter[0], pos_counter[1] + 40), f_size_btt, White)
-    # End of the game.
-    else:
-        # Set background
-        surface.blit(bg, [0, 0])
+    else:  # End of the game.
         # Print msg
         if win:
-            put_text("You win!!!", pos_end, 100, White)
+            put_text("You win!!!", pos_end, f_size_end, White)
         else:
-            put_text("You Lose!!!", pos_end, 100, White)
+            put_text("You Lose!!!", pos_end, f_size_end, White)
 
-        button("New game", btt, pos_btt_ng2, 170, 50, 3, utils)
+        button("New game", btt, pos_btt_g2, 170, 50, 3, utils)
         button("Exit", btt, pos_btt_ex, 170, 50, 4, utils)
         for event in pygame.event.get():
             # Exit the game.
